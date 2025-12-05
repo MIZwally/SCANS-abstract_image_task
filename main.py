@@ -4,14 +4,17 @@ from psychopy import visual, core, event, gui, sound
 import os, random, csv, time
 from pylsl import StreamOutlet, StreamInfo
 from sys import platform
+from datetime import datetime as dt
+import pytz
 
 ##Tangrams code for SCANS Project
 
 ## if you want to create a stream in this file use this code
 info = StreamInfo(name='Trigger1', type='Markers', channel_count=1, channel_format='int32', source_id='Tangrams')  # pyright: ignore[reportArgumentType]
 outlet = StreamOutlet(info)
+timezone = pytz.timezone('America/New_York')
 ## Loading screen for participant ID and how to change file order(update the file thing)
-info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '1', 'Run Order': 'DZN'}
+info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '2', 'Run Order': 'NZD'}
 dlg = gui.DlgFromDict(info, title="Tangrams", order=list(info.keys()))
 if not dlg.OK:
     core.quit()
@@ -48,17 +51,18 @@ save_path = f"data/{info['Dyad ID']}"
 os.makedirs(save_path, exist_ok=True)
 
 csv_file = os.path.join(save_path, f"{info['Dyad ID']}_{participant_id}_responses.csv")
-csv_headers = ['Block', 'Control?', 'Folder', 'Role',
+csv_headers = ['Block', 'Control?', 'Folder', 'Role', 'Block_start_time', 'Block_end_time',
+               'block_duration', 'completion_status',
                'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6',
-               'input_1', 'input_2', 'input_3', 'input_4', 'input_5', 'input_6',
-               'response_time', 'status']
+               'box_1_input', 'box_1_rt', 'box_2_input', 'box_2_rt', 'box_3_input', 'box_3_rt',
+               'box_4_input', 'box_4_rt', 'box_5_input', 'box_5_rt', 'box_6_input', 'box_6_rt',]
 
 with open(csv_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(csv_headers)
 
 ## Window set up(change window size based on computer used)
-win = visual.Window(size=(1500, 850), fullscr=False, color=[0,0,0], units='pix')
+win = visual.Window(size=(1500, 850), fullscr=True, color=[0,0,0], units='pix')
 mouse = event.Mouse(visible=True, win=win)
 
 start_text = ("Welcome to the abstract images task!\n\n"
@@ -121,24 +125,29 @@ for folder in custom_folder_order:
 
 used_images = []
 
-def log_response(block, condition, folder, role, images, selections, rt, status="completed"):
+def log_response(block, condition, folder, role, start_time, end_time, images, selections, times, rt, status="completed"):
     img_names = [os.path.basename(img) for img in images]
+    results = []
+    for i in range(len(selections)) :
+        results.append(selections[i])
+        results.append(times[i])
+        print(times[i])
     with open(csv_file, 'a', newline='') as f:
         writer = csv.writer(f)
         #row = [block, condition, folder, role] + img_names + [','.join(map(str, selections)), rt, status]
-        row = [block, condition, folder, role] + img_names + selections + [rt, status]
+        row = [block, condition, folder, role, start_time, end_time, rt, status] + img_names + results 
         writer.writerow(row)
 
 ##Utility functions
 def check_escape():
     if 'escape' in event.getKeys():
-        log_response(participant_id, 'N/A', 'N/A', 'N/A', ['']*6, [], 0.0, status="early_exit")
+        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
         win.close()
         core.quit()
 
 def check_escape2(key):
     if key == 'escape':
-        log_response(participant_id, 'N/A', 'N/A', 'N/A', ['']*6, [], 0.0, status="early_exit")
+        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
         win.close()
         core.quit()
 
@@ -202,6 +211,7 @@ def show_instructions(role, control):
             core.wait(0.1)
 
 def guessor_block(block_num, ctrl, folder, images):
+    start_time = dt.now(timezone).time().strftime("%H:%M:%S")
     positions = [(-400, 250), (0, 250), (400, 250), (-400, -120), (0, -120), (400, -120)]
     image_stims = [visual.ImageStim(win, image=img, pos=pos, size=(250, 250))
                    for img, pos in zip(images, positions)]
@@ -211,15 +221,16 @@ def guessor_block(block_num, ctrl, folder, images):
                             size=(110, 35), placeholder='', color='black', fillColor='white',
                             borderColor='black') for pos in box_positions]
 
-    start_time = time.time()
+    time0 = time.time()
     max_duration = 120
 
     active_box_index = None
     last_text = [''] * 6
     current_text = [''] * 6
     responses = [[] for _ in range(6)]
+    times = [[] for _ in range(6)]
     
-    while time.time() - start_time < max_duration:
+    while time.time() - time0 < max_duration:
         check_escape()
 
         for stim in image_stims:
@@ -239,38 +250,45 @@ def guessor_block(block_num, ctrl, folder, images):
             current_text[i] = box.text
             if current_text[i] != "" and current_text[i] != last_text[i]:
                 last_text[i] = current_text[i]  # update tracker
-                responses[i].append((current_text[i], round(time.time() - start_time, 3)))
+                responses[i].append(current_text[i])
+                temp = dt.now(timezone).time().strftime("%H:%M:%S")
+                times[i].append(temp)
         
         keys = event.getKeys()
         for key in keys:
             check_escape2(key)
-            if key == 'return' and ((time.time() - start_time) < 105) :
+            if key == 'return' and ((time.time() - time0) < 105) :
                 #responses = [box.text for box in input_boxes]
-                rt = round(time.time() - start_time, 3)
-                log_response(block_num, ctrl, folder, 'guessor', images, responses, rt)
+                rt = round(time.time() - time0, 3)
+                end_time = dt.now(timezone).time().strftime("%H:%M:%S")
+                log_response(block_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, rt)
                 return
             elif active_box_index is not None:
                 if key == 'backspace':
                     input_boxes[active_box_index].text = input_boxes[active_box_index].text[:-1]
                 elif len(key) == 1:
                     input_boxes[active_box_index].text += key
-                    
-    log_response(block_num, ctrl, folder, 'guessor', images, responses, 120.0)
+    end_time = dt.now(timezone).time().strftime("%H:%M:%S")
+    print(times[0])               
+    log_response(block_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
         
 def director_block(block_num, ctrl, folder, images):
+    start_time = dt.now(timezone).time().strftime("%H:%M:%S")
     for i, img_path in enumerate(images, start=1):
         stim = visual.ImageStim(win, image=img_path, size=(550, 550))
         counter = visual.TextStim(win, text=str(i), pos=(600, -300), color='white', height=30)
         stim.draw()
         counter.draw()
         win.flip()
-        start = time.time()
-        while time.time() - start < 20:
+        time0 = time.time()
+        while time.time() - time0 < 20:
             check_escape()
             core.wait(0.1)
 
     responses = [] * 6
-    log_response(block_num, ctrl, folder, 'director', images, responses, 120.0)
+    times = [] * 6
+    end_time = dt.now(timezone).time().strftime("%H:%M:%S")
+    log_response(block_num, ctrl, folder, 'director', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
     
 
 def get_control_folder(block_num, increment, f) :
