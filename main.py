@@ -256,8 +256,6 @@ def guessor_block(block_num, round_num, ctrl, folder, images):
                 responses[i].append(current_text[i])
                 temp = dt.now(timezone).time().strftime("%H:%M:%S")
                 times[i].append(temp)
-                print('current text: ', i, current_text[i])
-                print('responses: ', i, responses[i])
         
         keys = event.getKeys()
         for key in keys:
@@ -274,7 +272,6 @@ def guessor_block(block_num, round_num, ctrl, folder, images):
                 elif len(key) == 1:
                     input_boxes[active_box_index].text += key
     end_time = dt.now(timezone).time().strftime("%H:%M:%S")
-    print(times[0])               
     log_response(block_num, round_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
         
 def director_block(block_num, round_num, ctrl, folder, images):
