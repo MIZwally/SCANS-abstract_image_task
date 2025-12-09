@@ -51,8 +51,8 @@ save_path = f"data/{info['Dyad ID']}"
 os.makedirs(save_path, exist_ok=True)
 
 csv_file = os.path.join(save_path, f"{info['Dyad ID']}_{participant_id}_responses.csv")
-csv_headers = ['Block', 'Control?', 'Folder', 'Role', 'Block_start_time', 'Block_end_time',
-               'block_duration', 'completion_status',
+csv_headers = ['Block', 'Round', 'Control?', 'Folder', 'Role', 'Round_start_time', 'Round_end_time',
+               'round_duration', 'completion_status',
                'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6',
                'box_1_input', 'box_1_rt', 'box_2_input', 'box_2_rt', 'box_3_input', 'box_3_rt',
                'box_4_input', 'box_4_rt', 'box_5_input', 'box_5_rt', 'box_6_input', 'box_6_rt',]
@@ -125,7 +125,7 @@ for folder in custom_folder_order:
 
 used_images = []
 
-def log_response(block, condition, folder, role, start_time, end_time, images, selections, times, rt, status="completed"):
+def log_response(block, round, condition, folder, role, start_time, end_time, images, selections, times, rt, status="completed"):
     img_names = [os.path.basename(img) for img in images]
     results = []
     for i in range(len(selections)) :
@@ -135,19 +135,19 @@ def log_response(block, condition, folder, role, start_time, end_time, images, s
     with open(csv_file, 'a', newline='') as f:
         writer = csv.writer(f)
         #row = [block, condition, folder, role] + img_names + [','.join(map(str, selections)), rt, status]
-        row = [block, condition, folder, role, start_time, end_time, rt, status] + img_names + results 
+        row = [block, round, condition, folder, role, start_time, end_time, rt, status] + img_names + results 
         writer.writerow(row)
 
 ##Utility functions
 def check_escape():
     if 'escape' in event.getKeys():
-        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
+        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
         win.close()
         core.quit()
 
 def check_escape2(key):
     if key == 'escape':
-        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
+        log_response('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', ['']*6, ['']*6, ['']*6, 0.0, status="early_exit")
         win.close()
         core.quit()
 
@@ -210,7 +210,7 @@ def show_instructions(role, control):
             check_escape()
             core.wait(0.1)
 
-def guessor_block(block_num, ctrl, folder, images):
+def guessor_block(block_num, round_num, ctrl, folder, images):
     start_time = dt.now(timezone).time().strftime("%H:%M:%S")
     positions = [(-400, 250), (0, 250), (400, 250), (-400, -120), (0, -120), (400, -120)]
     image_stims = [visual.ImageStim(win, image=img, pos=pos, size=(250, 250))
@@ -261,7 +261,7 @@ def guessor_block(block_num, ctrl, folder, images):
                 #responses = [box.text for box in input_boxes]
                 rt = round(time.time() - time0, 3)
                 end_time = dt.now(timezone).time().strftime("%H:%M:%S")
-                log_response(block_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, rt)
+                log_response(block_num, round_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, rt)
                 return
             elif active_box_index is not None:
                 if key == 'backspace':
@@ -270,25 +270,26 @@ def guessor_block(block_num, ctrl, folder, images):
                     input_boxes[active_box_index].text += key
     end_time = dt.now(timezone).time().strftime("%H:%M:%S")
     print(times[0])               
-    log_response(block_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
+    log_response(block_num, round_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
         
-def director_block(block_num, ctrl, folder, images):
+def director_block(block_num, round_num, ctrl, folder, images):
     start_time = dt.now(timezone).time().strftime("%H:%M:%S")
+    time0 = time.time()
     for i, img_path in enumerate(images, start=1):
         stim = visual.ImageStim(win, image=img_path, size=(550, 550))
         counter = visual.TextStim(win, text=str(i), pos=(600, -300), color='white', height=30)
         stim.draw()
         counter.draw()
         win.flip()
-        time0 = time.time()
-        while time.time() - time0 < 20:
+        time1 = time.time()
+        while time.time() - time1 < 20:
             check_escape()
             core.wait(0.1)
 
     responses = [] * 6
     times = [] * 6
     end_time = dt.now(timezone).time().strftime("%H:%M:%S")
-    log_response(block_num, ctrl, folder, 'director', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
+    log_response(block_num, round_num, ctrl, folder, 'director', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
     
 
 def get_control_folder(block_num, increment, f) :
@@ -411,15 +412,13 @@ while block_num < block_count :
         print(cond_trig, fold_trig, role_trig, rep_trig)
         
         if role == 'guessor':
-            guessor_block(block_num + 1, ctrl, folder, images)
+            guessor_block(block_num + 1, repeat, ctrl, folder, images)
         else:
-            director_block(block_num + 1, ctrl, folder, images)
+            director_block(block_num + 1, repeat, ctrl, folder, images)
             
         role = 'director' if role == 'guessor' else 'guessor'
-    
-    block_num += 1
-    if block_num != block_count :
         show_fixation()
+    block_num += 1
 
 ## For the end of the task
 thanks.draw()
