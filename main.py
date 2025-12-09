@@ -247,12 +247,17 @@ def guessor_block(block_num, round_num, ctrl, folder, images):
         
         #for saving values every time they change 
         for i, box in enumerate(input_boxes) :
-            current_text[i] = box.text
-            if current_text[i] != "" and current_text[i] != last_text[i]:
+            if len(box.text) > 1:
+                current_text[i] = box.text[0]
+            else :
+                current_text[i] = box.text
+            if current_text[i] != "" and current_text[i] != last_text[i] :
                 last_text[i] = current_text[i]  # update tracker
                 responses[i].append(current_text[i])
                 temp = dt.now(timezone).time().strftime("%H:%M:%S")
                 times[i].append(temp)
+                print('current text: ', i, current_text[i])
+                print('responses: ', i, responses[i])
         
         keys = event.getKeys()
         for key in keys:
