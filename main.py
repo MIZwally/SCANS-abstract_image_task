@@ -71,18 +71,23 @@ start_text = ("Welcome to the abstract images task!\n\n"
             "These roles will be switched throughout the task.\n\n"
             "Sometimes you and your partner will not see the same images, but you will be told when that happens.\n\n"
             )
-guessor_text = ("If you are the Guessor, you will see 6 images.\n\n" 
-            "The director will describe an image to you and you have to guess\n"
-            "which of the 6 they are describing.\n\n"
-            "Type the image number (1-6) into the box below the image.\n\n"
-            "You can change your responses anytime during the round.\n\n"
-            #"You will have 2 minutes."
-            )
 
 director_text = ("If you are the Director, you will see one image at a time\n"
             "and describe it to the Guessor.\n\n"
             "Each image will appear for 20 seconds.\n\n"
             "Do not use the shapes in the image to describe it.\n"
+            )
+
+guessor_text = ("If you are the Guessor, you will see 6 images.\n\n" 
+            "The Director will describe an image to you and you have to guess\n"
+            "which of the 6 they are describing.\n\n"
+            "Type the image number (1-6) into the box below the image.\n\n"
+            "You can change your responses anytime during the round.\n\n"
+            )
+
+control_text = ("Sometimes you and your partner will not see the same images.\n\n"
+            "You will be told when this will happen.\n\n"
+            "Continue to act in your role as normal.\n"
             )
 
 ## set up text and sound devices
@@ -92,6 +97,8 @@ start = visual.TextStim(win, text=start_text, color='white', height=45,
 guessor_directions = visual.TextStim(win, text=guessor_text, color='white', height=45, 
                                      wrapWidth=1400, pos=(0, 300), anchorVert='top')
 director_directions = visual.TextStim(win, text=director_text, color='white', height=45, 
+                                      wrapWidth=1400, pos=(0, 300), anchorVert='top')
+control_directions = visual.TextStim(win, text=control_text, color='white', height=45, 
                                       wrapWidth=1400, pos=(0, 300), anchorVert='top')
 fixation = visual.TextStim(win, text='+', height=50, color='white')
 thanks = visual.TextStim(win, text="Thank you for participating!", color='white')
@@ -190,7 +197,7 @@ def show_instructions(role, control):
     if control :
         control_instructions = 'You and your partner will NOT see the same images.\n\n\n\n\n\n'
     else :
-        control_instructions = ' '
+        control_instructions = 'You and your partner WILL see the same images.\n\n\n\n\n\n'
     check_escape()
     if role == 'guessor':
         instruction = (
@@ -334,7 +341,31 @@ while True:
         break
     win.flip()
     
-clock = core.Clock()
+clock.reset(0)
+while True:
+    t = clock.getTime()
+    director_directions.draw()
+    if t > 5:
+        continue_text.draw()
+        win.flip()
+        wait_for_space()
+        break
+    win.flip()
+
+#draw director example page
+clock.reset(0)
+stim = visual.ImageStim(win, image=f'{base_dir}/intro_images/70.png', size=(550, 550))
+counter = visual.TextStim(win, text=str(1), pos=(600, -300), color='white', height=30)
+while True:
+    t = clock.getTime()
+    stim.draw()
+    counter.draw()
+    if t > 5:
+        wait_for_space()
+        break
+    win.flip()
+
+clock.reset(0)
 while True:
     t = clock.getTime()
     guessor_directions.draw()
@@ -345,10 +376,31 @@ while True:
         break
     win.flip()
 
-clock = core.Clock()
+#draw guessor example page
+image_dirs = ['70.png', '71.png', '72.png', '73.png', '74.png', '75.png']
+images = [f'{base_dir}/intro_images/{x}' for x in image_dirs]
+positions = [(-400, 250), (0, 250), (400, 250), (-400, -120), (0, -120), (400, -120)]
+image_stims = [visual.ImageStim(win, image=img, pos=pos, size=(250, 250))
+                   for img, pos in zip(images, positions)]
+box_positions = [(-400, 70), (0, 70), (400, 70), (-400, -300), (0, -300), (400, -300)]
+input_boxes = [visual.TextBox2(win, text='', pos=pos, letterHeight=24, editable=True,
+                            size=(110, 35), placeholder='', color='black', fillColor='white',
+                            borderColor='black') for pos in box_positions]
+clock.reset(0)
 while True:
     t = clock.getTime()
-    director_directions.draw()
+    for box, stim in zip(input_boxes, image_stims) :
+        stim.draw()
+        box.draw()
+    if t > 5:
+        wait_for_space()
+        break
+    win.flip()
+
+clock.reset(0)
+while True:
+    t = clock.getTime()
+    control_directions.draw()
     if t > 5:
         continue_text.text = "Please wait for the experimentor to start the task."
         continue_text.draw()
