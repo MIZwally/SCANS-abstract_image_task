@@ -69,7 +69,6 @@ start_text = ("Welcome to the abstract images task!\n\n"
             "For this task you will be working with your partner.\n\n"
             "You will each be assigned the role of either Director or Guessor.\n"
             "These roles will be switched throughout the task.\n\n"
-            "Sometimes you and your partner will not see the same images, but you will be told when that happens.\n\n"
             )
 
 director_text = ("If you are the Director, you will see one image at a time\n"
