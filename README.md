@@ -21,7 +21,7 @@ I: easyB, hardC &emsp;&emsp;&emsp;&emsp;&nbsp;
 M: easyC, hardC &emsp;&emsp;&emsp;&emsp; Q: easyD, hardC\
 F: easyA, hardD &emsp;&emsp;&emsp;&emsp;
 J: easyB, hardD &emsp;&emsp;&emsp;&emsp;&nbsp;
-N: easyC, hardD &emsp;&emsp;&emsp;&emsp;&nbsp; R: easyD, hardD
+N: easyC, hardD &emsp;&emsp;&emsp;&emsp;&nbsp; R: easyD, hardD\
 Z: control, control
 
 To avoid repeating tangrams, only certain task codes can be paired together in one run order code: K can only be paired with N, and L can only be paired with M. An example run order code would be "KWN". This code would indicate that the session would have 2 task blocks, then 2 control blocks, then 2 more task blocks from a different set of tangrams.
