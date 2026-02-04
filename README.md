@@ -6,30 +6,23 @@ The goal of the task is for the guessor to correctly guess which image, or "tang
 
 Each iteration of this pattern is considered a block, with the set of tangrams changing for each block. There are 2 types of blocks: task blocks and control blocks. Task blocks are as explained above, and can be either easy or hard. Easy tangrams are generally easier to describe than harder tangrams, and an easy block is always followed by a hard block. For the control blocks, the director and guessor do not see the same set of tangrams, so the director will be explaining different tangrams than the set that the guessor can choose from.
 
-Our paradigm contains 4 task blocks (2 pairs of easy and hard blocks) and 2 control blocks, with the order randomly preassigned with counterbalanced via a 3 letter "run order code." Each code corresponds to a combination of 2 blocks. For the task condition, each code is a pair of easy/hard blocks, while 
+Our paradigm contains 4 task blocks (2 pairs of easy and hard blocks) and 2 control blocks, with the order randomly preassigned with counterbalanced via a 3 letter "run order code." Each code corresponds to a combination of 2 blocks. For the task condition, each code is a pair of easy/hard blocks. There is only one control code, which draws from the same selection of images each time. 
 
 <strong>Run Order Code Interpretation:</strong>
 
-<ins>Task Condition</ins>
-
-C: easyA,hardA &emsp;&emsp;&emsp;&emsp; 
-G: easyB,hardA &emsp;&emsp;&emsp;&emsp; 
-K: easyC,hardA &emsp;&emsp;&emsp;&emsp;&nbsp; O: easyD,hardA\
-D: easyA,hardB &emsp;&emsp;&emsp;&emsp; 
-H: easyB,hardB &emsp;&emsp;&emsp;&emsp; 
-L: easyC,hardB &emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; P: easyD,hardB\
-E: easyA,hardC &emsp;&emsp;&emsp;&emsp;&nbsp;
-I: easyB,hardC &emsp;&emsp;&emsp;&emsp;&nbsp;
-M: easyC,hardC &emsp;&emsp;&emsp;&emsp; Q: easyD,hardC\
-F: easyA,hardD &emsp;&emsp;&emsp;&emsp;
-J: easyB,hardD &emsp;&emsp;&emsp;&emsp;&nbsp;
-N: easyC,hardD &emsp;&emsp;&emsp;&emsp;&nbsp; R: easyD,hardD
-
-<ins>Control Condition</ins>\
-W: controlA,controlC\
-X: controlA,controlD\
-Y: controlB,controlC\
-Z: controlB,controlD
+C: easyA, hardA &emsp;&emsp;&emsp;&emsp; 
+G: easyB, hardA &emsp;&emsp;&emsp;&emsp; 
+K: easyC, hardA &emsp;&emsp;&emsp;&emsp;&nbsp; O: easyD, hardA\
+D: easyA, hardB &emsp;&emsp;&emsp;&emsp; 
+H: easyB, hardB &emsp;&emsp;&emsp;&emsp; 
+L: easyC, hardB &emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; P: easyD, hardB\
+E: easyA, hardC &emsp;&emsp;&emsp;&emsp;&nbsp;
+I: easyB, hardC &emsp;&emsp;&emsp;&emsp;&nbsp;
+M: easyC, hardC &emsp;&emsp;&emsp;&emsp; Q: easyD, hardC\
+F: easyA, hardD &emsp;&emsp;&emsp;&emsp;
+J: easyB, hardD &emsp;&emsp;&emsp;&emsp;&nbsp;
+N: easyC, hardD &emsp;&emsp;&emsp;&emsp;&nbsp; R: easyD, hardD
+Z: control, control
 
 To avoid repeating tangrams, only certain task codes can be paired together in one run order code: K can only be paired with N, and L can only be paired with M. An example run order code would be "KWN". This code would indicate that the session would have 2 task blocks, then 2 control blocks, then 2 more task blocks from a different set of tangrams.
 
@@ -51,4 +44,4 @@ There are are other triggers, such as the fixation and instructions triggers, th
 
 <strong> Dependencies </strong>
 
-See the uv.lock pyproject.toml files for dependencies. The package pylsl requires liblsl, which must be downloaded independently on Mac OS computers. See the package documentation for more details.
+See the uv.lock and pyproject.toml files for dependencies. The package pylsl requires liblsl, which must be downloaded independently on Mac OS computers. See the package documentation for more details.
