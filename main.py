@@ -14,7 +14,7 @@ info = StreamInfo(name='Trigger1', type='Markers', channel_count=1, channel_form
 outlet = StreamOutlet(info)
 timezone = pytz.timezone('America/New_York')
 ## Loading screen for participant ID and how to change file order(update the file thing)
-info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '2', 'Run Order': 'NZD'}
+info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '2', 'Run Order': 'CZH'}
 dlg = gui.DlgFromDict(info, title="Tangrams", order=list(info.keys()))
 if not dlg.OK:
     core.quit()
@@ -50,7 +50,7 @@ if info['Participant #'] != '1' and info['Participant #'] != '2' :
 save_path = f"data/{info['Dyad ID']}"
 os.makedirs(save_path, exist_ok=True)
 
-csv_file = os.path.join(save_path, f"{info['Dyad ID']}_{participant_id}_responses.csv")
+csv_file = os.path.join(save_path, f"{info['Dyad ID']}_{participant_id}_abstract-images.csv")
 csv_headers = ['Block', 'Round', 'Control?', 'Folder', 'Role', 'Round_start_time', 'Round_end_time',
                'round_duration', 'completion_status',
                'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6',
