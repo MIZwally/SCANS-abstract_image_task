@@ -14,31 +14,26 @@ info = StreamInfo(name='Trigger1', type='Markers', channel_count=1, channel_form
 outlet = StreamOutlet(info)
 timezone = pytz.timezone('America/New_York')
 ## Loading screen for participant ID and how to change file order(update the file thing)
-info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '2', 'Run Order': 'NZD'}
+info = {'Dyad ID': '', 'Subject ID': '', 'Participant #': '2', 'Run Order': 'A1'}
 dlg = gui.DlgFromDict(info, title="Tangrams", order=list(info.keys()))
 if not dlg.OK:
     core.quit()
 
-code_interpreter = {"C": "easyA,hardA", "D": "easyA,hardB", "E": "easyA,hardC", "F": "easyA,hardD",
-                    "G": "easyB,hardA", "H": "easyB,hardB", "I": "easyB,hardC", "J": "easyB,hardD",
-                    "K": "easyC,hardA", "L": "easyC,hardB", "M": "easyC,hardC", "N": "easyC,hardD",
-                    "O": "easyD,hardA", "P": "easyD,hardB", "Q": "easyD,hardC", "R": "easyD,hardD",
-                    'Z': 'control,control'}
+code_interpreter = {"A1": "easy1, hard1, control1, easy2, control2, hard2", 
+                    "B1": "hard1, control1, easy1, hard2, easy2, control2",
+                    "C1": "control1, hard1, easy1, control2, easy2, hard2",
+                    "A2": "easy2, hard2, control2, easy1, control1, hard1",
+                    "B2": "hard2, control2, easy2, hard1, easy1, control1",
+                    "C2": "control2, hard2, easy2, control1, easy1, hard1"}
 
-folder_code_dict = {'easyA': 1, 'hardA': 2, 'easyB': 3, 'hardB': 4, 'easyC': 5, 'hardC': 6, 'easyD': 7, 'hardD': 8}
+folder_code_dict = {'easy1': 1, 'easy2': 2, 'hard1': 3, 'hard2': 4, 'control1': 5, 'control2': 6}
 control_index = []
 custom_folder_order = []
-if len(info['Run Order']) != 3 :
-    raise ValueError('Invalid run order; run order must be 3 letters')
-for code in info['Run Order'] :
-    code = code.capitalize()
-    if code not in code_interpreter.keys() :
-        raise ValueError(f'{code} is not a valid run code')
-    if code == 'Z' :
-        control_index.append(True)
-    else :
-        control_index.append(False)
-    [custom_folder_order.append(k) for k in code_interpreter[code].split(',')]
+if len(info['Run Order']) != 2 :
+    raise ValueError('Invalid run order; run order a letter and a number')
+print(info['Run Order'])
+[custom_folder_order.append(k) for k in code_interpreter[info['Run Order']].split(',')]
+print(custom_folder_order)
 
 control_options = [f for f in folder_code_dict.keys() if f not in custom_folder_order]
 
@@ -84,11 +79,6 @@ guessor_text = ("If you are the Guessor, you will see 6 images.\n\n"
             "You can change your responses anytime during the round.\n\n"
             )
 
-control_text = ("Sometimes you and your partner will not see the same images.\n\n"
-            "You will be told when this will happen.\n\n"
-            "Continue to act in your role as normal.\n"
-            )
-
 ## set up text and sound devices
 trigger_test = visual.TextStim(win, text="Trigger test", color='white', height=50)
 start = visual.TextStim(win, text=start_text, color='white', height=45, 
@@ -97,14 +87,14 @@ guessor_directions = visual.TextStim(win, text=guessor_text, color='white', heig
                                      wrapWidth=1400, pos=(0, 300), anchorVert='top')
 director_directions = visual.TextStim(win, text=director_text, color='white', height=45, 
                                       wrapWidth=1400, pos=(0, 300), anchorVert='top')
-control_directions = visual.TextStim(win, text=control_text, color='white', height=45, 
-                                      wrapWidth=1400, pos=(0, 300), anchorVert='top')
 fixation = visual.TextStim(win, text='+', height=50, color='white')
 thanks = visual.TextStim(win, text="Thank you for participating!", color='white')
 instruction_text = visual.TextStim(win, text='', height=50, wrapWidth=1400, 
                                    color='white', pos=(0, 150), anchorVert='top')
 continue_text = visual.TextStim(win, text="Press space to continue.", color='white', 
                                 height=45, wrapWidth=1400, pos=(0, -150), anchorVert='top')
+questions_text =  visual.TextStim(win, text="Any questions?", color='white', height=50, 
+                                     wrapWidth=1400, pos=(0, 200), anchorVert='top')
 start_sound = sound.Sound('D', secs=0.5, stereo=True, hamming=False, name='start_sound')
 end_sound = sound.Sound('C', secs=0.5, stereo=True, hamming=False, name='end_sound')
 
@@ -191,22 +181,16 @@ def select_images(folder, num=6):
     used_images.extend(selected)
     return selected
 
-def show_instructions(role, control):
+def show_instructions(role):
     outlet.push_sample(x=[66])
-    if control :
-        control_instructions = 'You and your partner will NOT see the same images.\n\n\n\n\n\n'
-    else :
-        control_instructions = 'You and your partner WILL see the same images.\n\n\n\n\n\n'
     check_escape()
     if role == 'guessor':
         instruction = (
             "You are the GUESSOR.\n\n"
-            f"{control_instructions}"
         )
     else:
         instruction = (
             "You are the DIRECTOR.\n\n"
-            f"{control_instructions}"
         )
     instruction_text.text = instruction
     instruction_text.draw()
@@ -299,23 +283,6 @@ def director_block(block_num, round_num, ctrl, folder, images):
     end_time = dt.now(timezone).time().strftime("%H:%M:%S")
     log_response(block_num, round_num, ctrl, folder, 'director', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
     
-
-def get_control_folder(block_num, increment, f) :
-    i = 0
-    folder = f
-    if block_num % 2 == 0 :
-        while folder == 'control' :
-            if 'easy' in control_options[i] :
-                folder = control_options[i]
-            i += increment
-    else :
-        while folder == 'control' :
-            if 'hard' in control_options[i] :
-                folder = control_options[i]
-            i += increment
-    return folder
-
-
 block_count = 6
 block_num = 0
 task_blocks = 0
@@ -399,7 +366,7 @@ while True:
 clock.reset(0)
 while True:
     t = clock.getTime()
-    control_directions.draw()
+    questions_text.draw()
     if t > 5:
         continue_text.text = "Please wait for the experimentor to start the task."
         continue_text.draw()
@@ -416,15 +383,16 @@ while block_num < block_count :
     #task vs control code (trigger 1)
     
     ctrl = False
-    if folder == 'control' :
+    if folder == 'control1' or folder == 'control2' :
         ctrl = True
         condition = 1
-        if info['Participant #'] == '1' :
-            i = 1
-            folder = get_control_folder(block_num, i, folder)
-        elif info['Participant #'] == '2' :
-            i = -1
-            folder = get_control_folder(block_num, i, folder)
+        if info['Participant #'] == '2' :
+            print('original: ', folder)
+            if folder == 'control1' :
+                folder = 'control2'
+            elif folder == 'control2' :
+                folder = 'control1'
+            print('new: ', folder)
     else :
         condition = 2
         task_blocks += 1
@@ -456,7 +424,7 @@ while block_num < block_count :
         role_trig = role_code + 30
         rep_trig = repeat + 40
         
-        show_instructions(role, ctrl)
+        show_instructions(role)
         
         outlet.push_sample(x=[cond_trig])
         outlet.push_sample(x=[fold_trig])
