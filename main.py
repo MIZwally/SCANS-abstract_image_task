@@ -1,6 +1,7 @@
 from psychopy import prefs
 prefs.hardware['audioLib'] = ['PTB', 'sounddevice', 'pyo', 'pygame'] # type: ignore
 from psychopy import visual, core, event, gui, sound
+from psychopy.hardware import keyboard
 import os, random, csv, time
 from pylsl import StreamOutlet, StreamInfo
 from sys import platform
@@ -32,7 +33,7 @@ custom_folder_order = []
 if len(info['Run Order']) != 2 :
     raise ValueError('Invalid run order; run order a letter and a number')
 print(info['Run Order'])
-[custom_folder_order.append(k) for k in code_interpreter[info['Run Order']].split(',')]
+[custom_folder_order.append(k) for k in code_interpreter[info['Run Order']].split(', ')]
 print(custom_folder_order)
 
 control_options = [f for f in folder_code_dict.keys() if f not in custom_folder_order]
@@ -59,6 +60,8 @@ with open(csv_file, 'w', newline='') as f:
 ## Window set up(change window size based on computer used)
 win = visual.Window(size=(1500, 850), fullscr=True, color=[0,0,0], units='pix')
 mouse = event.Mouse(visible=True, win=win)
+kb = keyboard.Keyboard()
+kb.clock.reset()
 
 start_text = ("Welcome to the abstract images task!\n\n"
             "For this task you will be working with your partner.\n\n"
@@ -147,15 +150,15 @@ def check_escape2(key):
         win.close()
         core.quit()
 
-def wait_for_space():
-    while True:
-        keys = event.getKeys(keyList=['space', 'escape'])
-        if 'escape' in keys:
-            win.close()
-            core.quit()
-        if 'space' in keys:
-            break
-        core.wait(0.1)
+def wait_for_space(time):
+    space = False
+    while not space :  
+        check_escape()
+        keys = kb.getKeys(keyList=['space'])
+        for key in keys :
+            if key.rt >= time :
+                space = True
+                break
 
 def show_fixation(duration=5):
     outlet.push_sample(x=[77])
@@ -289,56 +292,64 @@ task_blocks = 0
 
 trigger_test.draw()
 win.flip()
-wait_for_space()
+wait_for_space(0)
 outlet.push_sample(x=[1])
 print("trigger test")
 
 clock = core.Clock()
+kb.clock.reset()
 start_sound.play()
 outlet.push_sample(x=[99])
 print(99)
 while True:
+    check_escape()
     t = clock.getTime()
     start.draw()
-    if t > 5:
+    if t > 3:
         continue_text.draw()
         win.flip()
-        wait_for_space()
+        wait_for_space(3)
         break
     win.flip()
     
 clock.reset(0)
+kb.clock.reset()
 while True:
+    check_escape()
     t = clock.getTime()
     director_directions.draw()
-    if t > 5:
+    if t > 3:
         continue_text.draw()
         win.flip()
-        wait_for_space()
+        wait_for_space(3)
         break
     win.flip()
 
 #draw director example page
 clock.reset(0)
+kb.clock.reset()
 stim = visual.ImageStim(win, image=f'{base_dir}/intro_images/70.png', size=(550, 550))
 counter = visual.TextStim(win, text=str(1), pos=(600, -300), color='white', height=30)
 while True:
+    check_escape()
     t = clock.getTime()
     stim.draw()
     counter.draw()
-    if t > 5:
-        wait_for_space()
+    if t > 3:
+        wait_for_space(3)
         break
     win.flip()
 
 clock.reset(0)
+kb.clock.reset()
 while True:
+    check_escape()
     t = clock.getTime()
     guessor_directions.draw()
-    if t > 5:
+    if t > 3:
         continue_text.draw()
         win.flip()
-        wait_for_space()
+        wait_for_space(3)
         break
     win.flip()
 
@@ -353,25 +364,29 @@ input_boxes = [visual.TextBox2(win, text='', pos=pos, letterHeight=24, editable=
                             size=(110, 35), placeholder='', color='black', fillColor='white',
                             borderColor='black') for pos in box_positions]
 clock.reset(0)
+kb.clock.reset()
 while True:
+    check_escape()
     t = clock.getTime()
     for box, stim in zip(input_boxes, image_stims) :
         stim.draw()
         box.draw()
-    if t > 5:
-        wait_for_space()
+    if t > 3:
+        wait_for_space(3)
         break
     win.flip()
 
 clock.reset(0)
+kb.clock.reset()
 while True:
+    check_escape()
     t = clock.getTime()
     questions_text.draw()
-    if t > 5:
+    if t > 3:
         continue_text.text = "Please wait for the experimentor to start the task."
         continue_text.draw()
         win.flip()
-        wait_for_space()
+        wait_for_space(3)
         break
     win.flip()
 
