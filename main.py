@@ -442,8 +442,11 @@ while block_num < block_count :
         show_instructions(role)
         
         outlet.push_sample(x=[cond_trig])
+        core.wait(0.05)
         outlet.push_sample(x=[fold_trig])
+        core.wait(0.05)
         outlet.push_sample(x=[role_trig])
+        core.wait(0.05)
         outlet.push_sample(x=[rep_trig])
         print(cond_trig, fold_trig, role_trig, rep_trig)
         
