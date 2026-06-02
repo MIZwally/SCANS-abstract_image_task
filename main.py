@@ -420,10 +420,14 @@ while block_num < block_count :
         else :
             role = 'guessor' if block_num % 2 == 0 else 'director'
     else:
-        if easy_blocks == 1 or hard_blocks == 1 :
+        if easy_blocks == 1 :
            role = 'director' if info['Participant #'] == '1' else 'guessor'
-        if easy_blocks == 2 or hard_blocks == 2 :
+        elif hard_blocks == 1 :
            role = 'guessor' if info['Participant #'] == '1' else 'director'
+        elif easy_blocks == 2 :
+           role = 'guessor' if info['Participant #'] == '1' else 'director'
+        elif hard_blocks == 2 :
+            role = 'director' if info['Participant #'] == '1' else 'guessor'
     
     for i in range(2) :
         images = select_images(folder, 6)
