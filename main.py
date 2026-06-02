@@ -32,9 +32,7 @@ control_index = []
 custom_folder_order = []
 if len(info['Run Order']) != 2 :
     raise ValueError('Invalid run order; run order a letter and a number')
-print(info['Run Order'])
 [custom_folder_order.append(k) for k in code_interpreter[info['Run Order']].split(', ')]
-print(custom_folder_order)
 
 control_options = [f for f in folder_code_dict.keys() if f not in custom_folder_order]
 
@@ -127,14 +125,16 @@ used_images = []
 def log_response(block, round, condition, folder, role, start_time, end_time, images, selections, times, rt, status="completed"):
     img_names = [os.path.basename(img) for img in images]
     results = []
-    for i in range(len(selections)) :
-        results.append(selections[i])
+    for i in range(len(times)) :
+        if selections :
+            results.append(selections[i])
+        else : 
+            results.append('N/A')
         results.append(times[i])
-        print(times[i])
     with open(csv_file, 'a', newline='') as f:
         writer = csv.writer(f)
         #row = [block, condition, folder, role] + img_names + [','.join(map(str, selections)), rt, status]
-        row = [block, round, condition, folder, role, start_time, end_time, rt, status] + img_names + results 
+        row = [block, round, condition, folder, role, start_time, end_time, rt, status] + img_names + results
         writer.writerow(row)
 
 ##Utility functions
@@ -269,6 +269,7 @@ def guessor_block(block_num, round_num, ctrl, folder, images):
         
 def director_block(block_num, round_num, ctrl, folder, images):
     start_time = dt.now(timezone).time().strftime("%H:%M:%S")
+    display_times = []
     time0 = time.time()
     for i, img_path in enumerate(images, start=1):
         stim = visual.ImageStim(win, image=img_path, size=(550, 550))
@@ -277,14 +278,14 @@ def director_block(block_num, round_num, ctrl, folder, images):
         counter.draw()
         win.flip()
         time1 = time.time()
+        display_times.append(dt.now(timezone).time().strftime("%H:%M:%S"))
         while time.time() - time1 < 20:
             check_escape()
-            core.wait(0.1)
+            core.wait(0.05)
 
     responses = [] * 6
-    times = [] * 6
     end_time = dt.now(timezone).time().strftime("%H:%M:%S")
-    log_response(block_num, round_num, ctrl, folder, 'director', start_time, end_time, images, responses, times, round(time.time() - time0, 3))
+    log_response(block_num, round_num, ctrl, folder, 'director', start_time, end_time, images, responses, display_times, round(time.time() - time0, 3))
     
 block_count = 6
 block_num = 0
@@ -402,25 +403,26 @@ while block_num < block_count :
         ctrl = True
         condition = 1
         if info['Participant #'] == '2' :
-            print('original: ', folder)
             if folder == 'control1' :
                 folder = 'control2'
             elif folder == 'control2' :
                 folder = 'control1'
-            print('new: ', folder)
     else :
         condition = 2
-        task_blocks += 1
+        if folder in ['easy1', 'easy2'] :
+            easy_blocks +=1
+        if folder in ['hard1', 'hard2'] :
+            hard_blocks +=1
     
     if ctrl == True :
         if info['Participant #'] == '1' :
             role = 'director' if block_num % 2 == 0 else 'guessor'
         else :
             role = 'guessor' if block_num % 2 == 0 else 'director'
-    else :
-        if task_blocks in [1, 4] :
+    else:
+        if easy_blocks == 1 or hard_blocks == 1 :
            role = 'director' if info['Participant #'] == '1' else 'guessor'
-        elif task_blocks in [2, 3] :
+        if easy_blocks == 2 or hard_blocks == 2 :
            role = 'guessor' if info['Participant #'] == '1' else 'director'
     
     for i in range(2) :
