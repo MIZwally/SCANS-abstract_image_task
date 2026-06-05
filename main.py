@@ -89,7 +89,7 @@ guessor_directions = visual.TextStim(win, text=guessor_text, color='white', heig
 director_directions = visual.TextStim(win, text=director_text, color='white', height=45, 
                                       wrapWidth=1400, pos=(0, 300), anchorVert='top')
 fixation = visual.TextStim(win, text='+', height=50, color='white')
-thanks = visual.TextStim(win, text="Thank you for participating!", color='white')
+thanks = visual.TextStim(win, text="Thank you for participating!", color='white', height=45)
 instruction_text = visual.TextStim(win, text='', height=50, wrapWidth=1400, 
                                    color='white', pos=(0, 150), anchorVert='top')
 continue_text = visual.TextStim(win, text="Press space to continue.", color='white', 

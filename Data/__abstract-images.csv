@@ -1,3 +1,13 @@
 Block,Round,Control?,Folder,Role,Round_start_time,Round_end_time,round_duration,completion_status,image_1,image_2,image_3,image_4,image_5,image_6,box_1_input,box_1_rt,box_2_input,box_2_rt,box_3_input,box_3_rt,box_4_input,box_4_rt,box_5_input,box_5_rt,box_6_input,box_6_rt
-1,1,False,easy1,director,15:03:24,15:05:25,120.937,completed,34.png,48.png,19.png,22.png,44.png,24.png,N/A,15:03:25,N/A,15:03:45,N/A,15:04:05,N/A,15:04:25,N/A,15:04:45,N/A,15:05:05
-N/A,N/A,N/A,N/A,N/A,N/A,N/A,0.0,early_exit,,,,,,,,,,,,,,,,,,
+1,1,False,easy1,guessor,14:52:45,14:54:46,120.01,completed,44.png,34.png,22.png,19.png,24.png,48.png,[],[],[],[],[],[],[],[],[],[],[],[]
+1,2,False,easy1,director,14:55:01,14:57:02,120.821,completed,24.png,48.png,19.png,44.png,34.png,22.png,N/A,14:55:01,N/A,14:55:21,N/A,14:55:41,N/A,14:56:02,N/A,14:56:22,N/A,14:56:42
+2,1,False,hard1,director,14:57:17,14:59:18,120.828,completed,23.png,30.png,32.png,31.png,13.png,6.png,N/A,14:57:17,N/A,14:57:37,N/A,14:57:57,N/A,14:58:18,N/A,14:58:38,N/A,14:58:58
+2,2,False,hard1,guessor,14:59:33,15:01:34,120.017,completed,32.png,31.png,6.png,13.png,30.png,23.png,[],[],[],[],[],[],[],[],[],[],[],[]
+3,1,True,control2,guessor,15:01:49,15:03:50,120.014,completed,56.png,55.png,25.png,40.png,50.png,37.png,[],[],[],[],[],[],[],[],[],[],[],[]
+3,2,True,control2,director,15:04:05,15:06:06,120.808,completed,37.png,56.png,40.png,25.png,55.png,50.png,N/A,15:04:05,N/A,15:04:25,N/A,15:04:45,N/A,15:05:05,N/A,15:05:26,N/A,15:05:46
+4,1,False,easy2,director,15:06:21,15:08:22,120.782,completed,42.png,7.png,21.png,11.png,10.png,54.png,N/A,15:06:21,N/A,15:06:41,N/A,15:07:01,N/A,15:07:21,N/A,15:07:42,N/A,15:08:02
+4,2,False,easy2,guessor,15:08:37,15:10:38,120.005,completed,11.png,7.png,10.png,42.png,21.png,54.png,[],[],[],[],[],[],[],[],[],[],[],[]
+5,1,True,control1,director,15:10:53,15:12:54,120.798,completed,17.png,18.png,15.png,3.png,16.png,9.png,N/A,15:10:53,N/A,15:11:13,N/A,15:11:33,N/A,15:11:53,N/A,15:12:13,N/A,15:12:34
+5,2,True,control1,guessor,15:13:09,15:15:09,120.005,completed,17.png,16.png,18.png,3.png,9.png,15.png,[],[],[],[],[],[],[],[],[],[],[],[]
+6,1,False,hard2,guessor,15:15:25,15:17:25,120.003,completed,58.png,57.png,36.png,41.png,53.png,35.png,[],[],[],[],[],[],[],[],[],[],[],[]
+6,2,False,hard2,director,15:17:41,15:19:41,120.851,completed,35.png,53.png,57.png,58.png,36.png,41.png,N/A,15:17:41,N/A,15:18:01,N/A,15:18:21,N/A,15:18:41,N/A,15:19:01,N/A,15:19:21
