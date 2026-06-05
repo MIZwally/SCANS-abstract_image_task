@@ -289,7 +289,9 @@ def director_block(block_num, round_num, ctrl, folder, images):
     
 block_count = 6
 block_num = 0
-task_blocks = 0
+easy_blocks = 0
+hard_blocks = 0
+control_blocks = 0
 
 trigger_test.draw()
 win.flip()
@@ -396,38 +398,38 @@ while block_num < block_count :
     folder_index = block_num
     check_escape()
     folder = custom_folder_order[folder_index]
-    #task vs control code (trigger 1)
     
+    #determine guessor vs director and make sure partners have different control folders
     ctrl = False
     if folder == 'control1' or folder == 'control2' :
         ctrl = True
+        #task vs control code (trigger 1)        
         condition = 1
+        control_blocks += 1
         if info['Participant #'] == '2' :
             if folder == 'control1' :
                 folder = 'control2'
             elif folder == 'control2' :
                 folder = 'control1'
-    else :
+        if control_blocks == 1 :
+            role = 'director' if info['Participant #'] == '1' else 'guessor'
+        elif control_blocks == 2 :
+            role = 'guessor' if info['Participant #'] == '1' else 'director'
+    else :        
+        #task vs control code (trigger 1)
         condition = 2
         if folder in ['easy1', 'easy2'] :
             easy_blocks +=1
+            if easy_blocks == 1 :
+                role = 'director' if info['Participant #'] == '1' else 'guessor'
+            else :
+                role = 'guessor' if info['Participant #'] == '1' else 'director'
         if folder in ['hard1', 'hard2'] :
             hard_blocks +=1
-    
-    if ctrl == True :
-        if info['Participant #'] == '1' :
-            role = 'director' if block_num % 2 == 0 else 'guessor'
-        else :
-            role = 'guessor' if block_num % 2 == 0 else 'director'
-    else:
-        if easy_blocks == 1 :
-           role = 'director' if info['Participant #'] == '1' else 'guessor'
-        elif hard_blocks == 1 :
-           role = 'guessor' if info['Participant #'] == '1' else 'director'
-        elif easy_blocks == 2 :
-           role = 'guessor' if info['Participant #'] == '1' else 'director'
-        elif hard_blocks == 2 :
-            role = 'director' if info['Participant #'] == '1' else 'guessor'
+            if hard_blocks == 1 :
+                role = 'guessor' if info['Participant #'] == '1' else 'director'
+            else :
+                role = 'director' if info['Participant #'] == '1' else 'guessor'
     
     for i in range(2) :
         images = select_images(folder, 6)
