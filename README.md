@@ -1,3 +1,6 @@
+Visits before 6/5/26 (Dyads 01-09) may have instances where the same participant was the same role first for both instances of a condition (i.e. director first for both easy rounds).
+This bug was fixed and does not apply to visits after this date.
+
 <strong>Abstract Images Task</strong>
 
 This task involves 2 participants and 2 roles (director and guessor). Each participant is assigned a number, either 1 or 2, which determines their initial role. This script can be run for both participants at the same time with the input of their number.
