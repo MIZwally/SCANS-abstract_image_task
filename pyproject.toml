@@ -10,3 +10,10 @@ dependencies = [
     "pylsl>=1.17.6",
     "pytz>=2025.2",
 ]
+[tool.uv]
+override-dependencies = [
+  "pyobjc>=12.1; sys_platform == 'darwin'",
+  "pyobjc-framework-coremidi>=12.1; sys_platform == 'darwin'",
+  "pyobjc-framework-quartz>=12.1; sys_platform == 'darwin'",
+]
+
