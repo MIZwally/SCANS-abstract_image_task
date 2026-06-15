@@ -96,8 +96,8 @@ continue_text = visual.TextStim(win, text="Press space to continue.", color='whi
                                 height=45, wrapWidth=1400, pos=(0, -150), anchorVert='top')
 questions_text =  visual.TextStim(win, text="Any questions?", color='white', height=50, 
                                      wrapWidth=1400, pos=(0, 200), anchorVert='top')
-start_sound = sound.Sound('D', secs=0.5, stereo=True, hamming=False, name='start_sound')
-end_sound = sound.Sound('C', secs=0.5, stereo=True, hamming=False, name='end_sound')
+start_sound = sound.Sound('D', secs=1, stereo=True, hamming=False, name='start_sound')
+end_sound = sound.Sound('C', secs=1, stereo=True, hamming=False, name='end_sound')
 
 ## Image pathway (make sure youy edit directory before running task and that you have the right folders downloaded)
 #checking if windows or mac
@@ -295,7 +295,6 @@ print("trigger test")
 
 clock = core.Clock()
 kb.clock.reset()
-start_sound.play()
 outlet.push_sample(x=[99])
 print(99)
 while True:
@@ -388,6 +387,7 @@ while True:
     win.flip()
 
 #looping through blocks
+start_sound.play()
 while block_num < block_count :
     folder_index = block_num
     check_escape()
