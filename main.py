@@ -253,13 +253,7 @@ def guessor_block(block_num, round_num, ctrl, folder, images):
         keys = event.getKeys()
         for key in keys:
             check_escape2(key)
-            if key == 'return' and ((time.time() - time0) < 105) :
-                #responses = [box.text for box in input_boxes]
-                rt = round(time.time() - time0, 3)
-                end_time = dt.now(timezone).time().strftime("%H:%M:%S")
-                log_response(block_num, round_num, ctrl, folder, 'guessor', start_time, end_time, images, responses, times, rt)
-                return
-            elif active_box_index is not None:
+            if active_box_index is not None:
                 if key == 'backspace':
                     input_boxes[active_box_index].text = input_boxes[active_box_index].text[:-1]
                 elif len(key) == 1:
