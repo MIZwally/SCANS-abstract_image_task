@@ -19,6 +19,7 @@ def check_correct(director, guessor, inputs, rts, start, diff) :
         correct_rt = []
         all_incorrect_responses = []
         all_incorrect_rt = []
+        num_responses = 0
         for j, g, in enumerate(guessor) :
             incorrect_indices = []
             incorrect_responses = []
@@ -27,32 +28,37 @@ def check_correct(director, guessor, inputs, rts, start, diff) :
             if str(i+1) in inp :
                 if d == g :      
                     correct_indices = [k for k, x in enumerate(inp) if x == str(i+1)]    
-                    incorrect_responses = [x for x in inp if x != str(i+1)]       
+                    incorrect_responses = [x for x in inp if x != str(i+1)]
+                    num_responses = len(inp)       
                     crt_set = [ast.literal_eval(rts[j])[k] for k in correct_indices]
                     for rt in crt_set :
                         correct_rt.append(calc_rt(start, rt, diff, i))                                     
                     if correct_indices[-1] == len(inp)-1 :
-                        accurate = True 
+                        accurate = True
                 else :
                     incorrect_indices = [k for k, x in enumerate(inp) if x == str(i+1)]    
                     irt_set = [ast.literal_eval(rts[j])[k] for k in incorrect_indices]
                     for ind, rt in zip(incorrect_indices, irt_set) :
                         incorrect_rt.append(calc_rt(start, rt, diff, ind))
+            else :
+                if d == g :
+                    num_responses = len(inp)
+                    incorrect_responses = inp
             [all_incorrect_rt.append(x) for x in incorrect_rt]    
             [all_incorrect_responses.append(x) for x in incorrect_responses]        
         if accurate :
             round_accuracy += 1
             if correct_rt[::-1][0] <= 20 :
                 round_rt += correct_rt[::-1][0]
+            else :
+                round_rt += 20
         else :
             round_rt += 20
         
         graded = {'image': d, 'correct?': accurate, 'correct rt': correct_rt, 'incorrect rt': all_incorrect_rt,
-                  'incorrect resp box': all_incorrect_responses, 'number resp box': len(correct_rt)+len(all_incorrect_responses)}
-        print('graded: ', graded)
-        graded_set.append(graded)
-    print('ROUND ', round_rt, round_accuracy/6)        
-    return round_accuracy/6, round_rt, graded_set       
+                  'incorrect resp box': all_incorrect_responses, 'number resp box': num_responses}
+        graded_set.append(graded)     
+    return round_accuracy/6, round_rt, graded_set 
 
 pl1_file = pd.read_csv('/Users/mizwally/Desktop/DYAD_01-tangrams/DYAD_01_SCAN_011_abstract-images.csv')
 pl2_file = pd.read_csv('/Users/mizwally/Desktop/DYAD_01-tangrams/DYAD_01_SCAN_012_abstract-images.csv')
