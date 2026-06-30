@@ -3,9 +3,9 @@ import datetime as dt
 import ast
 
 
-pl1_file = pd.read_csv('Data/real-data/DYAD_09_SCAN_091_abstract-images.csv')
-pl2_file = pd.read_csv('Data/real-data/DYAD_09_SCAN_092_abstract-images.csv')
-dyad_id = 9
+pl1_file = pd.read_csv('Data/real-data/DYAD_11_SCAN_111_abstract-images.csv')
+pl2_file = pd.read_csv('Data/real-data/DYAD_11_SCAN_112_abstract-images.csv')
+dyad_id = 11
 
 def calc_rt(start, irt, diff, i, img) :    
     rt = dt.datetime.strptime(irt, '%H:%M:%S')
@@ -14,7 +14,6 @@ def calc_rt(start, irt, diff, i, img) :
     else :
         img_t = dt.datetime.strptime(img, '%H:%M:%S')
         rt_act = rt - img_t
-        print(img_t, rt, rt_act)
     return rt_act.total_seconds()
 
 def check_correct(director, guessor, inputs, rts, start, diff, image_times) :
@@ -137,7 +136,7 @@ for i in range(len(pl1_rounds)) :
 
 pl1_answer_file = pd.concat([pl1_guessor[pl1_guessor.columns[:5]].reset_index(drop=True), pd.Series(pl1_accs, name='Accuracy'), 
                              pd.Series(pl1_rts, name='RT'), pd.DataFrame(pl1_answers)], axis=1).drop(columns=['Role', 'Control?'])
-pl1_answer_file.to_csv('Data/answer-files/DYAD_09_SCAN_091_answers.csv', index=False)
+pl1_answer_file.to_csv('Data/answer-files/DYAD_11_SCAN_111_answers.csv', index=False)
 pl2_answer_file = pd.concat([pl2_guessor[pl2_guessor.columns[:5]].reset_index(drop=True), pd.Series(pl2_accs, name='Accuracy'), 
                              pd.Series(pl2_rts, name='RT'), pd.DataFrame(pl2_answers)], axis=1).drop(columns=['Role', 'Control?'])
-pl2_answer_file.to_csv('Data/answer-files/DYAD_09_SCAN_092_answers.csv', index=False)
+pl2_answer_file.to_csv('Data/answer-files/DYAD_11_SCAN_112_answers.csv', index=False)
